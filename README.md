@@ -2,6 +2,8 @@
 
 Missing Page View for SwiftUI
 
+<img src="https://raw.githubusercontent.com/avdyushin/PageView/master/Assets/PageView.gif" width="200px" />
+
 ### How to use?
 
 ```swift
