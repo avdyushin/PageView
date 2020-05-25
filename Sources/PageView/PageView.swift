@@ -49,8 +49,8 @@ public struct PageView<Content: View, Indicator: View, Modifier: PageIndicatorPr
 
     public typealias Page = PageContentView<Content, Indicator>
 
-    @_functionBuilder struct PageBuilder {
-        static func buildBlock(_ pages: Page...) -> [Page] { pages }
+    @_functionBuilder public struct PageBuilder {
+        public static func buildBlock(_ pages: Page...) -> [Page] { pages }
     }
 
     private let pages: [Page]
