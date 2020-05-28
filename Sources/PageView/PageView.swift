@@ -8,29 +8,43 @@
 
 import SwiftUI
 
+/// Paginated horizontal view
 public struct PageView<Content: View>: View {
 
+    /// There is no way to get views count out of `@ViewBuilder`.
+    /// So wrapping view into `Page` object allows us to work with an array of views.
+    /// Providing it into `init` or `buildBlock` we can calculate number of pages.
     public struct Page: View {
         private let content: Content
+
         public init(@ViewBuilder _ content: () -> Content) {
             self.content = content()
         }
+
         public var body: some View { content }
     }
 
+    /// Page builder to allow using DSL to build view
     @_functionBuilder public struct PageBuilder {
         public static func buildBlock(_ pages: Page...) -> [Page] { pages }
     }
 
+    /// Page views
     private let pages: [Page]
+    /// Bounce horizontally flag
     private let alwaysBounceHorizontally = true
-
+    /// Current visible page index
     @Binding private var index: Int
+    /// Relative y offset
     @State private var offset: CGFloat = 0
 
     public init(index: Binding<Int>, @PageBuilder _ content: () -> [Page]) {
+        self.init(index: index, pages: content())
+    }
+
+    public init(index: Binding<Int>, pages: [Page]) {
         self._index = index
-        self.pages = content()
+        self.pages = pages
     }
 
     public var body: some View {
@@ -44,13 +58,11 @@ public struct PageView<Content: View>: View {
             .offset(x: -CGFloat(self.index) * geometry.size.width)
             .offset(x: self.offset)
             .animation(.interactiveSpring())
-            .gesture(DragGesture()
-            .onChanged {
-                self.onDragChanged(gesture: $0, geometry: geometry)
-            }
-            .onEnded {
-                self.onDragEnded(gesture: $0, geometry: geometry)
-            })
+            .gesture(
+                DragGesture()
+                    .onChanged { self.onDragChanged(gesture: $0, geometry: geometry) }
+                    .onEnded { self.onDragEnded(gesture: $0, geometry: geometry) }
+            )
         }
     }
 
